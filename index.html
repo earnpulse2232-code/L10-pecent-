@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#f8fafc">
+    <title>Math SSC - Percentage Lecture 10</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg-main: #f8fafc; --bg-card: #ffffff; --primary: #2563eb; --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff; --text-dark: #0f172a; --text-muted: #64748b; --border-color: #e2e8f0;
+            --green: #10b981; --green-light: #ecfdf5; --red: #ef4444; --red-light: #fef2f2;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-main); color: var(--text-dark); min-height: 100dvh; font-size: 15px; line-height: 1.5; overflow-x: hidden; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+        .hidden { display: none !important; }
+        .start-screen { position: fixed; inset: 0; background: var(--bg-main); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .start-card { width: 100%; max-width: 440px; background: var(--bg-card); border-radius: 24px; padding: 36px 28px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
+        .brand-icon { width: 60px; height: 60px; background: var(--primary-light); color: var(--primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px; }
+        .start-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+        .start-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+        .mode-btn { display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 16px; text-align: left; margin-bottom: 12px; transition: all 0.2s ease; }
+        .mode-btn:hover { border-color: var(--primary); background: var(--primary-light); transform: translateY(-2px); }
+        .mode-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .mode-icon.quiz { background: #dbeafe; color: #2563eb; }
+        .mode-icon.test { background: #d1fae5; color: #059669; }
+        .mode-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .mode-info-txt { font-size: 12px; color: var(--text-muted); }
+        .mode-arrow { margin-left: auto; color: var(--text-muted); font-size: 14px; }
+        .quiz-app { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        .quiz-header { flex-shrink: 0; background: #fff; border-bottom: 1px solid var(--border-color); padding: 12px 18px; }
+        .quiz-header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .hdr-brand { font-weight: 700; font-size: 15px; }
+        .hdr-timer { padding: 6px 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 20px; font-family: monospace; font-weight: 700; color: var(--primary); }
+        .hdr-btn { width: 38px; height: 38px; border-radius: 10px; background: #fff; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
+        .quiz-main { flex: 1; overflow-y: auto; max-width: 900px; width: 100%; margin: 0 auto; padding: 24px 16px; }
+        .q-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-sm); }
+        .q-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .q-num-badge { padding: 5px 12px; background: var(--primary-light); color: var(--primary); border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .lang-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border-color); font-size: 12px; font-weight: 600; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .q-text { font-size: 16px; font-weight: 600; line-height: 1.6; margin-bottom: 22px; white-space: pre-line; }
+        .opts { display: flex; flex-direction: column; gap: 11px; }
+        .opt { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 14px; cursor: pointer; transition: all 0.15s ease; }
+        .opt:hover:not(.locked) { border-color: var(--primary); background: #f8fafc; }
+        .opt.selected { border-color: var(--primary); background: var(--primary-light); }
+        .opt.correct { border-color: var(--green); background: var(--green-light); }
+        .opt.wrong { border-color: var(--red); background: var(--red-light); }
+        .opt.locked { cursor: default; }
+        .opt-letter { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+        .opt.selected .opt-letter { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .opt.correct .opt-letter { background: var(--green); color: #fff; border-color: var(--green); }
+        .opt.wrong .opt-letter { background: var(--red); color: #fff; border-color: var(--red); }
+        .opt-text { flex: 1; font-weight: 600; }
+        .opt-tag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+        .opt.correct .opt-tag { background: var(--green); color: #fff; }
+        .opt.wrong .opt-tag { background: var(--red); color: #fff; }
+        .sol-box { margin-top: 20px; padding: 16px; background: #f8fafc; border-left: 4px solid var(--primary); border-radius: 12px; }
+        .sol-head { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+        .quiz-nav { flex-shrink: 0; background: #fff; border-top: 1px solid var(--border-color); padding: 12px 18px; }
+        .quiz-nav-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .nav-btn { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; }
+        .nav-btn.prev { background: #fff; border: 1px solid var(--border-color); }
+        .nav-btn.prev:disabled { opacity: 0.4; cursor: not-allowed; }
+        .nav-btn.submit { background: var(--green-light); color: #065f46; border: 1px solid #a7f3d0; }
+        .nav-btn.next { background: var(--primary); color: #fff; }
+        .palette-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; display: none; }
+        .palette-overlay.open { display: block; }
+        .palette-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: min(340px, 85vw); background: #fff; z-index: 160; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.25s; }
+        .palette-drawer.open { transform: translateX(0); }
+        .pal-head { padding: 18px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+        .pal-grid { flex: 1; overflow-y: auto; padding: 16px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-content: start; }
+        .pal-btn { aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--border-color); background: #f8fafc; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+        .pal-btn.answered { background: var(--green); color: #fff; border-color: var(--green); }
+        .pal-btn.current { outline: 2px solid var(--primary); outline-offset: 2px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 170; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { width: 100%; max-width: 420px; background: #fff; border-radius: 20px; padding: 28px; text-align: center; }
+        .modal-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 22px; }
+        .modal-stat { background: #f8fafc; border-radius: 12px; padding: 14px; border: 1px solid var(--border-color); }
+        .modal-stat-num { font-size: 24px; font-weight: 800; }
+        .modal-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        .modal-btn.confirm { background: var(--primary); color: #fff; }
+        .modal-btn.cancel { background: #f1f5f9; }
+        .results-screen { position: fixed; inset: 0; background: var(--bg-main); z-index: 180; display: none; overflow-y: auto; padding: 30px 16px 60px; }
+        .results-screen.open { display: block; }
+        .results-box { max-width: 600px; margin: 0 auto; text-align: center; }
+        .res-score-card { background: #0f172a; color: #fff; border-radius: 20px; padding: 28px; margin: 20px 0; }
+        .res-score-val { font-size: 54px; font-weight: 800; }
+        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .res-item { background: #fff; border-radius: 14px; padding: 16px; border: 1px solid var(--border-color); }
+        .res-item-val { font-size: 22px; font-weight: 700; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: #0f172a; color: #fff; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; z-index: 300; opacity: 0; transition: all 0.25s; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="startScreen">
+        <div class="start-card">
+            <div class="brand-icon"><i class="fas fa-percent"></i></div>
+            <h1 class="start-title">Percentage (Lecture 10)</h1>
+            <p class="start-desc">Maths SSC — Practice & Speed Test</p>
+            <button class="mode-btn" onclick="startApp('quiz')">
+                <div class="mode-icon quiz"><i class="fas fa-bolt"></i></div>
+                <div><div class="mode-name">Practice Mode</div><div class="mode-info-txt">Har question ke sath instant solution aur explanation dekhein.</div></div>
+            </button>
+            <button class="mode-btn" onclick="startApp('test')">
+                <div class="mode-icon test"><i class="fas fa-clock"></i></div>
+                <div><div class="mode-name">Exam Mode</div><div class="mode-info-txt">Bina kisi clue ke timer ke sath pura mock test attempt karein.</div></div>
+            </button>
+        </div>
+    </div>
+
+    <div class="quiz-app hidden" id="quizApp">
+        <header class="quiz-header">
+            <div class="quiz-header-inner">
+                <button class="hdr-btn" onclick="openPalette()"><i class="fas fa-th-large"></i></button>
+                <div class="hdr-brand">Percentage - Lecture 10</div>
+                <div class="hdr-timer"><i class="fas fa-stopwatch"></i> <span id="timerText">00:00</span></div>
+            </div>
+        </header>
+
+        <main class="quiz-main" id="quizMain"></main>
+
+        <nav class="quiz-nav" id="quizNav">
+            <div class="quiz-nav-inner">
+                <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn submit" onclick="openSubmitModal()"><i class="fas fa-paper-plane"></i> Submit</button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()"><span id="nextLabel">Next</span> <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="palette-overlay" id="paletteOverlay" onclick="closePalette()"></div>
+    <aside class="palette-drawer" id="paletteDrawer">
+        <div class="pal-head"><span>Questions</span><button onclick="closePalette()"><i class="fas fa-times"></i></button></div>
+        <div class="pal-grid" id="paletteGrid"></div>
+    </aside>
+
+    <div class="modal-overlay" id="submitModal">
+        <div class="modal-box">
+            <h3>Submit Test?</h3>
+            <div class="modal-stats-grid">
+                <div class="modal-stat"><div class="modal-stat-num" id="modalAttempted" style="color:var(--green)">0</div><div>Attempted</div></div>
+                <div class="modal-stat"><div class="modal-stat-num" id="modalUnattempted" style="color:var(--text-muted)">0</div><div>Unattempted</div></div>
+            </div>
+            <button class="modal-btn confirm" onclick="confirmSubmit()">Yes, Finish</button>
+            <button class="modal-btn cancel" onclick="closeSubmitModal()">Resume</button>
+        </div>
+    </div>
+
+    <div class="results-screen" id="resultsScreen"><div class="results-box" id="resultsInner"></div></div>
+    <div class="toast" id="toast"><span id="toastText"></span></div>
+
+    <script>
+        const QUESTIONS = [
+            {
+                e: "Convert 28% into the form of ratio.",
+                h: "28% को अनुपात के रूप में परिवर्तित कीजिए।",
+                oEn: ["25 : 7", "18 : 7", "7 : 25", "7 : 18"],
+                oHi: ["25 : 7", "18 : 7", "7 : 25", "7 : 18"],
+                a: 2,
+                sE: "28% = 28 / 100 = 7 / 25 = 7 : 25.",
+                sH: "28% = 28 / 100 = 7 / 25 = 7 : 25."
+            },
+            {
+                e: "Express the following as decimals respectively.\n20%, 0.5%, 0.03%",
+                h: "निम्नलिखित को क्रमशः दशमलव रूप में व्यक्त कीजिए।\n20%, 0.5%, 0.03%",
+                oEn: ["0.02, 0.005, 0.0003", "0.02, 0.005, 0.003", "0.2, 0.005, 0.0003", "0.2, 0.0005, 0.0003"],
+                oHi: ["0.02, 0.005, 0.0003", "0.02, 0.005, 0.003", "0.2, 0.005, 0.0003", "0.2, 0.0005, 0.0003"],
+                a: 2,
+                sE: "20% = 20/100 = 0.2\n0.5% = 0.5/100 = 0.005\n0.03% = 0.03/100 = 0.0003\nCorrect order: 0.2, 0.005, 0.0003.",
+                sH: "20% = 20/100 = 0.2\n0.5% = 0.5/100 = 0.005\n0.03% = 0.03/100 = 0.0003\nअतः सही मान: 0.2, 0.005, 0.0003."
+            },
+            {
+                e: "If p% of p is 36, then p is equal to:",
+                h: "यदि p का p% 36 है, तो p किसके बराबर है:",
+                oEn: ["3600", "600", "60", "15"],
+                oHi: ["3600", "600", "60", "15"],
+                a: 2,
+                sE: "(p * p) / 100 = 36  =>  p^2 = 3600  =>  p = 60.",
+                sH: "(p * p) / 100 = 36  =>  p^2 = 3600  =>  p = 60."
+            },
+            {
+                e: "(x% of y + y% of x) is not equal to:",
+                h: "(y का x% + x का y%) निम्न में से किसके बराबर नहीं है?",
+                oEn: ["x% of 2y", "½% of 4xy", "2% of xy", "xy% of 3"],
+                oHi: ["x% of 2y", "½% of 4xy", "2% of xy", "xy% of 3"],
+                a: 3,
+                sE: "x% of y + y% of x = (xy/100) + (yx/100) = 2xy/100 = 2% of xy = x% of 2y = (1/2)% of 4xy.\nIt is NOT equal to xy% of 3 (which is 3xy/100).",
+                sH: "(x% of y + y% of x) = 2xy/100 होता है। विकल्प D में (xy% of 3) = 3xy/100 है, जो इसके बराबर नहीं है।"
+            },
+            {
+                e: "5% of a = b, then b% of 20 is the same as:",
+                h: "a का 5% = b, तो 20 का b% किसके बराबर होगा:",
+                oEn: ["20% of A/2", "50% of A/20", "50% of A/2", "20% of A/20"],
+                oHi: ["20% of A/2", "50% of A/20", "50% of A/2", "20% of A/20"],
+                a: 3,
+                sE: "b = 5a / 100 = a / 20.\nb% of 20 = (b * 20) / 100 = ((a / 20) * 20) / 100 = a / 100 = 20% of (a / 20) = (20/100) * (a/20) = a/100.",
+                sH: "b = a/20.\nb% of 20 = (a/20 * 20)/100 = a/100.\nविकल्प D: 20% of A/20 = (20/100) * (A/20) = A/100."
+            },
+            {
+                e: "If 20% of x = y, then y% of 20 is the same as:",
+                h: "अगर x का 20% = y, तो 20 का y% समान होगा:",
+                oEn: ["5% of x", "4% of x", "10% of x", "7% of x"],
+                oHi: ["5% of x", "4% of x", "10% of x", "7% of x"],
+                a: 1,
+                sE: "y = 0.2x.\ny% of 20 = (y * 20) / 100 = (0.2x * 20) / 100 = 4x / 100 = 4% of x.",
+                sH: "y = x/5.\ny% of 20 = (y * 20)/100 = (x/5 * 20)/100 = 4x/100 = 4% of x."
+            },
+            {
+                e: "2% of a = b, then b% of 10 is the same as:",
+                h: "a का 2% = b, तो 10 का b% किसके बराबर होगा?",
+                oEn: ["200% of a", "20% of a/100", "20% of a/10", "200% of a/10"],
+                oHi: ["200% of a", "20% of a/100", "20% of a/10", "200% of a/10"],
+                a: 1,
+                sE: "b = 2a / 100.\nb% of 10 = (b * 10) / 100 = (2a/100 * 10) / 100 = 20a / 10000 = (20/100) * (a/100) = 20% of (a/100).",
+                sH: "b = 2a/100.\n10 का b% = (b * 10)/100 = (2a/100 * 10)/100 = (20/100) * (a/100) = 20% of (a/100)."
+            },
+            {
+                e: "[25% of (50% of 30% of 150)] / [40% of 2250] is equal to:",
+                h: "[25% of (50% of 30% of 150)] / [40% of 2250] किसके बराबर है?",
+                oEn: ["0.625%", "0.225%", "0.25%", "0.825%"],
+                oHi: ["0.625%", "0.225%", "0.25%", "0.825%"],
+                a: 0,
+                sE: "Numerator = 0.25 * 0.50 * 0.30 * 150 = 5.625.\nDenominator = 0.40 * 2250 = 900.\nFraction = 5.625 / 900 = 0.00625 = 0.625%.",
+                sH: "अंश = (1/4) * (1/2) * (3/10) * 150 = 45/8 = 5.625.\nहर = 40% of 2250 = 900.\nमान = 5.625 / 900 = 0.00625 = 0.625%."
+            },
+            {
+                e: "A baker ordered 10 kg of premium flour and some additional kg of standard flour. The price of premium flour per kg was twice that of the standard flour. Due to an ordering error, the quantities of the two types of flour were interchanged. This decreased the total cost by 25%. Find the ratio of the quantity of premium flour to standard flour in the original order.",
+                h: "एक बेकरी वाले ने 10 किग्रा प्रीमियम आटा और कुछ अतिरिक्त किग्रा सामान्य आटा मंगाया। प्रीमियम आटे का प्रति किग्रा मूल्य सामान्य आटे का दोगुना था। ऑर्डर में गलती से दोनों आटों की मात्राएँ आपस में बदल गईं, जिससे कुल लागत 25% कम हो गई। मूल ऑर्डर में प्रीमियम आटा और सामान्य आटा की मात्रा का अनुपात ज्ञात कीजिए?",
+                oEn: ["1:2", "5:2", "3:4", "4:5"],
+                oHi: ["1:2", "5:2", "3:4", "4:5"],
+                a: 1,
+                sE: "Let price of standard = 1, premium = 2. Premium qty = 10, Standard qty = x.\nOriginal Bill = 10*2 + x*1 = 20 + x.\nNew Bill (interchanged) = 10*1 + x*2 = 10 + 2x.\nDecreased by 25% means New = 0.75 * Original:\n10 + 2x = 3/4 * (20 + x)\n40 + 8x = 60 + 3x  =>  5x = 20  =>  x = 4.\nRatio of premium to standard = 10 : 4 = 5 : 2.",
+                sH: "माना सामान्य का मूल्य 1 और प्रीमियम का मूल्य 2 है। प्रीमियम = 10 kg, सामान्य = x kg.\nमूल बिल = 10(2) + x(1) = 20 + x.\nनया बिल = 10(1) + 2x = 10 + 2x.\n10 + 2x = (3/4)(20 + x)  =>  40 + 8x = 60 + 3x  =>  5x = 20  =>  x = 4.\nअनुपात = 10 : 4 = 5 : 2."
+            },
+            {
+                e: "A stationery shop ordered 6 dozen red pens and some additional dozen blue pens. The price of red pens per dozen was three times that of the blue ones. When the order was delivered, it was found that the number of dozens of the two colours had been interchanged. This increased the bill by 40%. Find the ratio of the number of dozens of red pens to the number of dozens of blue pens in the original order.",
+                h: "एक स्टेशनरी दुकान ने 6 दर्जन लाल पेन और कुछ अतिरिक्त दर्जन नीले पेन मंगाए। प्रति दर्जन लाल पेन की कीमत नीले पेन की कीमत से तीन गुना थी। जब ऑर्डर डिलीवर हुआ, तो पाया गया कि दोनों रंगों के पेन के दर्जनों की संख्या आपस में बदल गई थी। इससे बिल में 40% की वृद्धि हो गई। मूल ऑर्डर में लाल पेन के दर्जनों की संख्या और नीले पेन के दर्जनों की संख्या का अनुपात ज्ञात कीजिए।",
+                oEn: ["1:1", "1:2", "2:3", "3:4"],
+                oHi: ["1:1", "1:2", "2:3", "3:4"],
+                a: 1,
+                sE: "Let price of blue = 1, red = 3. Red = 6, Blue = x.\nOriginal Bill = 6*3 + x*1 = 18 + x.\nInterchanged Bill = 6*1 + 3x = 6 + 3x.\nIncreased by 40%: New = 1.4 * Original:\n6 + 3x = 1.4(18 + x) = 25.2 + 1.4x\n1.6x = 19.2  =>  x = 12.\nRatio of red to blue = 6 : 12 = 1 : 2.",
+                sH: "माना नीला पेन = ₹1/दर्जन, लाल पेन = ₹3/दर्जन। लाल = 6 दर्जन, नीला = x दर्जन।\nमूल बिल = 18 + x, नया बिल = 6 + 3x.\n6 + 3x = 1.4(18 + x) = 25.2 + 1.4x  =>  1.6x = 19.2  =>  x = 12.\nलाल और नीले पेन का अनुपात = 6 : 12 = 1 : 2."
+            },
+            {
+                e: "A stationery supplier ordered 8 boxes of premium pens and some boxes of standard pens. The price of premium pens per box was twice that of standard pens. When delivered, the number of boxes had been accidentally interchanged, increasing the bill by 25%. What was the ratio of the original number of boxes of premium pens to standard pens?",
+                h: "एक स्टेशनरी सप्लायर ने प्रीमियम पेन के 8 बॉक्स और कुछ बॉक्स स्टैंडर्ड पेन के ऑर्डर किए। प्रीमियम पेन की कीमत स्टैंडर्ड पेन की कीमत से दोगुनी थी। डिलीवरी के समय बॉक्स आपस में बदल गए, जिससे कुल बिल 25% बढ़ गया। प्रीमियम और स्टैंडर्ड पेन के मूल बॉक्सों का अनुपात क्या था?",
+                oEn: ["2 : 1", "1 : 3", "1 : 2", "3 : 1"],
+                oHi: ["2 : 1", "1 : 3", "1 : 2", "3 : 1"],
+                a: 2,
+                sE: "Price standard = 1, premium = 2. Premium = 8, Standard = x.\nOriginal Bill = 8*2 + x = 16 + x.\nNew Bill = 8*1 + 2x = 8 + 2x.\nBill increased by 25%: New = 1.25 * Original:\n8 + 2x = 1.25(16 + x) = 20 + 1.25x\n0.75x = 12  =>  (3/4)x = 12  =>  x = 16.\nRatio = 8 : 16 = 1 : 2.",
+                sH: "स्टैंडर्ड = ₹1, प्रीमियम = ₹2। प्रीमियम = 8, स्टैंडर्ड = x।\nमूल बिल = 16 + x, नया बिल = 8 + 2x.\n8 + 2x = (5/4)(16 + x)  =>  32 + 8x = 80 + 5x  =>  3x = 48  =>  x = 16.\nअनुपात = 8 : 16 = 1 : 2."
+            },
+            {
+                e: "The monthly salaries of A and B are the same. A, B and C donate 10%, 8% and 9% respectively, of their monthly salaries to a charitable trust. The difference between the donations of A and B is ₹400. The total donation by A and B is ₹900 more than that of C. What is the monthly salary of C?",
+                h: "A और B का मासिक वेतन समान है। A, B और C अपने मासिक वेतन का क्रमशः 10%, 8% और 9% किसी धर्मार्थ ट्रस्ट को दान करते हैं। A और B के दान के बीच का अंतर ₹400 है। A और B द्वारा किया गया कुल दान C की तुलना में ₹900 अधिक है। C का मासिक वेतन ज्ञात कीजिए?",
+                oEn: ["₹27,000", "₹36,000", "₹25,000", "₹30,000"],
+                oHi: ["₹27,000", "₹36,000", "₹25,000", "₹30,000"],
+                a: 3,
+                sE: "Let salary of A = B = S.\nDonation diff = (10% - 8%) of S = 2% of S = 400  =>  S = 20,000.\nTotal donation of A and B = 10% + 8% = 18% of 20,000 = 3600.\nTotal donation is ₹900 more than C's donation:\nDonation of C = 3600 - 900 = 2700.\n9% of C's salary = 2700  =>  C's salary = 2700 / 0.09 = ₹30,000.",
+                sH: "माना A और B का वेतन S है।\n(10% - 8%) of S = 2% of S = 400  =>  S = 20,000.\nA और B का कुल दान = 18% of 20,000 = ₹3600.\nC का दान = 3600 - 900 = ₹2700.\nC का 9% = 2700  =>  C का मासिक वेतन = 2700 / 0.09 = ₹30,000."
+            },
+            {
+                e: "A sum of ₹1,50,000 is distributed among three persons — A, B and C — so that they receive 20%, 30% and 50% of the total sum respectively. A receives the same amount from another sum of money which is distributed among them so that they receive 50%, 30% and 20% of the another sum respectively. Find the total amount received by B from both sums of money.",
+                h: "₹1,50,000 की धनराशि को A, B और C के बीच इस तरह विभाजित किया जाता है कि उन्हें क्रमशः 20%, 30% और 50% प्राप्त होता है। A को किसी दूसरी राशि, जो उनके बीच 50%, 30%, और 20% के अनुपात में बांटी जाती है, से पहले के समान राशि प्राप्त होती है। B द्वारा दोनों राशियों से प्राप्त कुल राशि ज्ञात कीजिए?",
+                oEn: ["₹58,000", "₹60,000", "₹63,000", "₹55,000"],
+                oHi: ["₹58,000", "₹60,000", "₹63,000", "₹55,000"],
+                a: 2,
+                sE: "Sum 1 = 1,50,000.\nA gets 20% of 1,50,000 = 30,000.\nB gets 30% of 1,50,000 = 45,000.\nIn Sum 2, A gets 50% which equals 30,000  =>  Sum 2 = 60,000.\nB gets 30% of Sum 2 = 30% of 60,000 = 18,000.\nTotal received by B = 45,000 + 18,000 = ₹63,000.",
+                sH: "पहली राशि = ₹1,50,000.\nA को मिला = 20% = ₹30,000; B को मिला = 30% = ₹45,000.\nदूसरी राशि का 50% = ₹30,000  =>  दूसरी राशि = ₹60,000.\nदूसरी राशि से B को मिला = 30% of 60,000 = ₹18,000.\nB को मिली कुल राशि = 45,000 + 18,000 = ₹63,000."
+            },
+            {
+                e: "Deepak spends 75% of his income, whereas Karan spends 80% of his income. Both of them save ₹7,500 each. The income of Sanjay is one-third of the sum of the income of Deepak and Karan. If Sanjay spends (7/9) of his income, then find his savings.",
+                h: "दीपक अपनी आय का 75% खर्च करता है, जबकि करण अपनी आय का 80% खर्च करता है। दोनों ₹7,500 की बचत करते हैं। संजय की आय, दीपक और करण की आय के योग का एक-तिहाई है। यदि संजय अपनी आय का (7/9) भाग खर्च करता है, तो उसकी बचत ज्ञात कीजिए।",
+                oEn: ["₹5,500", "₹5,900", "₹5,000", "₹5,700"],
+                oHi: ["₹5,500", "₹5,900", "₹5,000", "₹5,700"],
+                a: 2,
+                sE: "Deepak's savings = 25% of his income = 7500  =>  Deepak's income = 7500 / 0.25 = 30,000.\nKaran's savings = 20% of his income = 7500  =>  Karan's income = 7500 / 0.20 = 37,500.\nSum of incomes = 30,000 + 37,500 = 67,500.\nSanjay's income = (1/3) * 67,500 = 22,500.\nSanjay saves = 1 - 7/9 = 2/9 of his income = (2/9) * 22,500 = 2 * 2500 = ₹5,000.",
+                sH: "दीपक की आय = 7500 / 25% = ₹30,000.\nकरण की आय = 7500 / 20% = ₹37,500.\nसंजय की आय = (30,000 + 37,500) / 3 = ₹22,500.\nसंजय की बचत = (1 - 7/9) * 22,500 = (2/9) * 22,500 = ₹5,000."
+            },
+            {
+                e: "The salaries of P and Q together amount to ₹9,60,000. P and Q save 64% and 44% respectively of their individual salaries. If P's expenditure is 1.5 times Q's expenditure, then what is the ratio of P's salary to Q's salary?",
+                h: "P और Q का कुल वेतन ₹9,60,000 है। P और Q अपने वेतन का क्रमशः 64% और 44% बचत करते हैं। यदि P का व्यय Q के व्यय का 1.5 गुना है, तो P और Q के वेतन का अनुपात क्या है?",
+                oEn: ["2 : 3", "7 : 3", "3 : 7", "3 : 2"],
+                oHi: ["2 : 3", "7 : 3", "3 : 7", "3 : 2"],
+                a: 1,
+                sE: "P's expenditure = 100% - 64% = 36% of P.\nQ's expenditure = 100% - 44% = 56% of Q.\nGiven: 36% of P = 1.5 * (56% of Q) = (3/2) * 56% of Q = 84% of Q.\nP / Q = 84 / 36 = 7 / 3 = 7 : 3.",
+                sH: "P का खर्च = 36% of P; Q का खर्च = 56% of Q.\n36% of P = 1.5 * 56% of Q = 84% of Q  =>  P / Q = 84 / 36 = 7 / 3."
+            },
+            {
+                e: "A number is mistakenly multiplied by 7/5 instead of being multiplied by 3/2. What is the percentage change in the result due to this mistake?",
+                h: "किसी संख्या को 3/2 से गुणा करने के बजाय गलती से 7/5 से गुणा कर दिया गया। इस गलती के कारण परिणाम में प्रतिशत परिवर्तन क्या है?",
+                oEn: ["6 2/3 %", "7 2/3 %", "3 2/3 %", "5 2/3 %"],
+                oHi: ["6 2/3 %", "7 2/3 %", "3 2/3 %", "5 2/3 %"],
+                a: 0,
+                sE: "Let number = 10 (LCM of 2, 5).\nCorrect value = 10 * (3/2) = 15.\nMistaken value = 10 * (7/5) = 14.\nChange = (15 - 14) / 15 * 100 = (1/15) * 100 = 20/3% = 6 2/3%.",
+                sH: "माना संख्या = 10.\nसही मान = 10 * 3/2 = 15.\nगलत मान = 10 * 7/5 = 14.\nप्रतिशत परिवर्तन = (1 / 15) * 100 = 20/3 % = 6 2/3 %."
+            },
+            {
+                e: "By mistake, the reciprocal of a positive fraction got typed in place of itself, and thereby its value got reduced by 175/4 %. What was the value of the fraction?",
+                h: "गलती से, किसी धनात्मक भिन्न के स्थान पर उसका व्युत्क्रम टाइप हो गया और इस तरह इसके मान में 175/4 % की कमी हो गई। भिन्न का मान क्या था?",
+                oEn: ["1/4", "1/2", "4/3", "3/4"],
+                oHi: ["1/4", "1/2", "4/3", "3/4"],
+                a: 2,
+                sE: "Reduction % = 175/4 % = (175/4)/100 = 7/16.\nNew value = x * (1 - 7/16) = (9/16)x.\nGiven new value is reciprocal: 1/x = 9x / 16  =>  x^2 = 16/9  =>  x = 4/3.",
+                sH: "कमी = 175/4 % = 7/16.\nनया मान = मूल का (1 - 7/16) = 9/16 भाग.\n1/x = (9/16)x  =>  x^2 = 16/9  =>  x = 4/3."
+            },
+            {
+                e: "P and Q are two fixed points 10 cm apart, and R is a point on PQ such that PR = 6 cm. By what percentage is the length of QR decreased when the length of PR is increased by 5%?",
+                h: "P और Q 10 cm की दूरी पर दो निश्चित बिंदु हैं, और R, PQ पर एक बिंदु है कि PR = 6 cm है। जब PR की लंबाई 5% बढ़ाई जाती है तो QR की लंबाई कितने प्रतिशत कम हो जाती है?",
+                oEn: ["8.5%", "7.5%", "7%", "8%"],
+                oHi: ["8.5%", "7.5%", "7%", "8%"],
+                a: 1,
+                sE: "PQ = 10 cm, PR = 6 cm  =>  QR = 10 - 6 = 4 cm.\nPR increased by 5% = 6 * 0.05 = 0.3 cm.\nSince total length PQ is constant, QR decreases by the exact same amount = 0.3 cm.\nPercentage decrease in QR = (0.3 / 4) * 100 = 7.5%.",
+                sH: "PQ = 10 cm, PR = 6 cm  =>  QR = 4 cm.\nPR में वृद्धि = 6 का 5% = 0.3 cm.\nQR में कमी = 0.3 cm.\nQR में % कमी = (0.3 / 4) * 100 = 7.5%."
+            },
+            {
+                e: "If (x + 20)% of 250 is 25% more than x% of 220, then 10% of (x + 50) is what percent less than 15% of x?",
+                h: "यदि 250 का (x + 20)%, 220 के x% से 25% अधिक है, तो (x + 50) का 10%, x के 15% से कितने प्रतिशत कम होगा?",
+                oEn: ["13 1/3 %", "8 1/3 %", "16 2/3 %", "33 1/3 %"],
+                oHi: ["13 1/3 %", "8 1/3 %", "16 2/3 %", "33 1/3 %"],
+                a: 2,
+                sE: "250 * (x + 20)/100 = 1.25 * [220 * x / 100]\n2.5(x + 20) = 1.25 * 2.2x = 2.75x\n2.5x + 50 = 2.75x  =>  0.25x = 50  =>  x = 200.\nNow:\n10% of (x + 50) = 10% of 250 = 25.\n15% of x = 15% of 200 = 30.\nDifference = (30 - 25) / 30 * 100 = 5/30 * 100 = 16 2/3%.",
+                sH: "2.5(x + 20) = (5/4) * 2.2x = 2.75x  =>  0.25x = 50  =>  x = 200.\n(x + 50) का 10% = 250 का 10% = 25.\nx का 15% = 200 का 15% = 30.\nकमी % = (30 - 25)/30 * 100 = 5/30 * 100 = 16 2/3%."
+            },
+            {
+                e: "If decreasing 180 by x% gives the same result as increasing 60 by x%, then x% of 410 will be more than (x + 20)% of 210 (correct to two decimal places):",
+                h: "यदि 180 में x% की कमी करने पर और 60 में x% की वृद्धि करने पर समान परिणाम प्राप्त होता है, तो 410 का x%, 210 के (x + 20)% से कितना अधिक होगा?",
+                oEn: ["36.57%", "37.57%", "31.67%", "39.46%"],
+                oHi: ["36.57%", "37.57%", "31.67%", "39.46%"],
+                a: 3,
+                sE: "180 * (100 - x)/100 = 60 * (100 + x)/100\n3(100 - x) = 100 + x  =>  300 - 3x = 100 + x  =>  4x = 200  =>  x = 50.\nx% of 410 = 50% of 410 = 205.\n(x + 20)% of 210 = 70% of 210 = 147.\nRequired % more = (205 - 147) / 147 * 100 = 58 / 147 * 100 = 39.46%.",
+                sH: "180(100 - x) = 60(100 + x)  =>  300 - 3x = 100 + x  =>  4x = 200  =>  x = 50.\n410 का 50% = 205.\n210 का 70% = 147.\nअधिक % = (205 - 147) / 147 * 100 = (58 / 147) * 100 ≈ 39.46%."
+            },
+            {
+                e: "With reference to a number greater than one, the difference between itself and its reciprocal is 25% of the sum of itself and its reciprocal. By how much percentage (correct to one decimal place) is the fourth power of the number greater than its square?",
+                h: "एक से बड़ी संख्या के संदर्भ में, स्वयं और उसके व्युत्क्रम के बीच का अंतर, स्वयं और उसके व्युत्क्रम के योग का 25% है। संख्या की चौथी घात उसके वर्ग से कितने प्रतिशत अधिक है?",
+                oEn: ["57.8", "62.5", "64.5", "66.7"],
+                oHi: ["57.8", "62.5", "64.5", "66.7"],
+                a: 3,
+                sE: "Let number = x (x > 1).\nx - 1/x = 0.25 * (x + 1/x) = 1/4 * (x + 1/x)\n4x - 4/x = x + 1/x  =>  3x = 5/x  =>  x^2 = 5/3.\nFourth power = (x^2)^2 = (5/3)^2 = 25/9.\nSquare = x^2 = 5/3 = 15/9.\nPercentage greater = (25/9 - 15/9) / (15/9) * 100 = (10/15) * 100 = 2/3 * 100 = 66.67% ≈ 66.7%.",
+                sH: "x - 1/x = 1/4 (x + 1/x)  =>  4x - 4/x = x + 1/x  =>  3x = 5/x  =>  x^2 = 5/3.\nचौथी घात (x^4) = 25/9, वर्ग (x^2) = 5/3 = 15/9.\nप्रतिशत अधिक = (25/9 - 15/9) / (15/9) * 100 = (10/15) * 100 = 66.67% ≈ 66.7%."
+            }
+        ];
+
+        const state = {
+            current: 0,
+            answers: new Array(QUESTIONS.length).fill(null),
+            locked: new Array(QUESTIONS.length).fill(false),
+            mode: 'test',
+            lang: 'en',
+            startTime: null,
+            timerInterval: null,
+            elapsed: 0
+        };
+
+        function $(id) { return document.getElementById(id); }
+
+        function toast(msg) {
+            const t = $('toast');
+            $('toastText').textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            return String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        }
+
+        function startApp(mode) {
+            state.mode = mode;
+            $('startScreen').classList.add('hidden');
+            $('quizApp').classList.remove('hidden');
+            state.startTime = Date.now();
+            state.timerInterval = setInterval(() => {
+                state.elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+                $('timerText').textContent = formatTime(state.elapsed);
+            }, 1000);
+            renderQuestion();
+            buildPalette();
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'en' ? 'hi' : 'en';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const i = state.current;
+            const q = QUESTIONS[i];
+            const isQuiz = state.mode === 'quiz';
+            const locked = state.locked[i];
+            const userAns = state.answers[i];
+            const qTxt = state.lang === 'en' ? q.e : q.h;
+            const opts = state.lang === 'en' ? q.oEn : q.oHi;
+
+            let optsHtml = '';
+            opts.forEach((opt, idx) => {
+                let cls = '', tag = '';
+                if (isQuiz && locked) {
+                    if (idx === q.a) {
+                        cls = 'correct';
+                        tag = '<span class="opt-tag">Correct</span>';
+                    }
+                    if (userAns === idx && idx !== q.a) {
+                        cls = 'wrong';
+                        tag = '<span class="opt-tag">Your Ans</span>';
+                    }
+                } else if (userAns === idx) {
+                    cls = 'selected';
+                }
+                optsHtml += `
+                    <div class="opt ${cls} ${locked ? 'locked' : ''}" onclick="selectOption(${idx})">
+                        <div class="opt-letter">${String.fromCharCode(65 + idx)}</div>
+                        <div class="opt-text">${opt}</div>
+                        ${tag}
+                    </div>
+                `;
+            });
+
+            const solTxt = state.lang === 'en' ? q.sE : q.sH;
+            let solHtml = (isQuiz && locked) ? `
+                <div class="sol-box">
+                    <div class="sol-head"><i class="fas fa-lightbulb"></i> Explanation</div>
+                    <div>${solTxt}</div>
+                </div>
+            ` : '';
+
+            $('quizMain').innerHTML = `
+                <div class="q-card">
+                    <div class="q-top">
+                        <div class="q-num-badge">Question ${i + 1} of ${QUESTIONS.length}</div>
+                        <button class="lang-btn" onclick="toggleLang()">
+                            <i class="fas fa-language"></i> ${state.lang === 'en' ? 'हिन्दी' : 'English'}
+                        </button>
+                    </div>
+                    <div class="q-text">${qTxt}</div>
+                    <div class="opts">${optsHtml}</div>
+                    ${solHtml}
+                </div>
+            `;
+
+            $('prevBtn').disabled = i === 0;
+            $('nextLabel').textContent = i === QUESTIONS.length - 1 ? 'Finish' : 'Next';
+            updatePaletteGrid();
+        }
+
+        function selectOption(idx) {
+            if (state.mode === 'quiz' && state.locked[state.current]) return;
+            state.answers[state.current] = idx;
+            if (state.mode === 'quiz') {
+                state.locked[state.current] = true;
+                if (idx === QUESTIONS[state.current].a) {
+                    toast('Correct! 🎉');
+                } else {
+                    toast('Incorrect');
+                }
+            }
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (state.current > 0) {
+                state.current--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (state.current < QUESTIONS.length - 1) {
+                state.current++;
+                renderQuestion();
+            } else {
+                openSubmitModal();
+            }
+        }
+
+        function buildPalette() {
+            const grid = $('paletteGrid');
+            grid.innerHTML = '';
+            QUESTIONS.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'pal-btn';
+                btn.id = 'pal-' + i;
+                btn.textContent = i + 1;
+                btn.onclick = () => {
+                    state.current = i;
+                    closePalette();
+                    renderQuestion();
+                };
+                grid.appendChild(btn);
+            });
+            updatePaletteGrid();
+        }
+
+        function updatePaletteGrid() {
+            QUESTIONS.forEach((_, i) => {
+                const btn = $('pal-' + i);
+                if (!btn) return;
+                btn.className = 'pal-btn';
+                if (i === state.current) btn.classList.add('current');
+                if (state.answers[i] !== null) btn.classList.add('answered');
+            });
+        }
+
+        function openPalette() {
+            $('paletteDrawer').classList.add('open');$('paletteOverlay').classList.add('open');
+        }
+
+        function closePalette() {
+            $('paletteDrawer').classList.remove('open');$('paletteOverlay').classList.remove('open');
+        }
+
+        function openSubmitModal() {
+            const ans = state.answers.filter(a => a !== null).length;
+            $('modalAttempted').textContent = ans;
+            $('modalUnattempted').textContent = QUESTIONS.length - ans;
+            $('submitModal').classList.add('open');
+        }
+
+        function closeSubmitModal() {
+            $('submitModal').classList.remove('open');
+        }
+
+        function confirmSubmit() {
+            closeSubmitModal();
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            let correct = 0, wrong = 0;
+            state.answers.forEach((ans, i) => {
+                if (ans !== null) {
+                    if (ans === QUESTIONS[i].a) correct++;
+                    else wrong++;
+                }
+            });
+            $('resultsInner').innerHTML = `
+                <h2>Test Completed!</h2>
+                <p style="color:var(--text-muted);margin:8px 0;">Total Time: ${formatTime(state.elapsed)}</p>
+                <div class="res-score-card">
+                    <div class="res-score-val">${correct} / ${QUESTIONS.length}</div>
+                    <div>Score</div>
+                </div>
+                <div class="res-grid">
+                    <div class="res-item"><div class="res-item-val" style="color:var(--green)">${correct}</div><div>Correct</div></div>
+                    <div class="res-item"><div class="res-item-val" style="color:var(--red)">${wrong}</div><div>Wrong</div></div>
+                </div>
+                <button class="modal-btn confirm" onclick="location.reload()">Re-attempt</button>
+            `;
+            $('resultsScreen').classList.add('open');
+        }
+    </script>
+</body>
+</html>
